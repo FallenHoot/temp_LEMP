@@ -130,15 +130,15 @@ module VirtualMachineScaleSet 'br/public:avm/res/compute/virtual-machine-scale-s
     // Non-required parameters
     adminPassword: VMSSLocalAdminPassword
     encryptionAtHost: false
-    // extensionCustomScriptConfig: {
-    //   enabled: true
-    //   settings: {
-    //     fileUris: [
-    //       'https://raw.githubusercontent.com/Azure-Samples/compute-automation-configurations/master/automate_nginx.sh'
-    //     ]
-    //     script: 'automate_nginx.sh'
-    //   }
-    // }
+    extensionCustomScriptConfig: {
+       enabled: true
+       settings: {
+         fileUris: [
+           'https://raw.githubusercontent.com/FallenHoot/temp_LEMP/refs/heads/main/Workload/vmss/cloud-init.txt'
+         ]
+         script: 'automate_nginx.sh'
+       }
+     }
     extensionAntiMalwareConfig: {
       enabled: true
       settings: {
