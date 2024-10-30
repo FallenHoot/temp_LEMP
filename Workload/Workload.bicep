@@ -28,6 +28,7 @@ param VMSSLocalAdminUser string = 'localadmin'
 @secure()
 @description('Local Admin Password. Required for virtual machine')
 param VMSSLocalAdminPassword string
+var customDataB64 = loadFileAsBase64('./vmss/cloud-init.txt')
 
 module WorkloadResourceGroup 'br/public:avm/res/resources/resource-group:0.3.0' = {
   scope: subscription()
@@ -130,7 +131,7 @@ module VirtualMachineScaleSet 'br/public:avm/res/compute/virtual-machine-scale-s
     // Non-required parameters
     adminPassword: VMSSLocalAdminPassword
     encryptionAtHost: false
-    customData: loadTextContent('./vmss/cloud-init.txt')
+    customData: customDataB64
     extensionAntiMalwareConfig: {
       enabled: true
       settings: {
@@ -147,19 +148,6 @@ module VirtualMachineScaleSet 'br/public:avm/res/compute/virtual-machine-scale-s
           scanType: 'Quick'
           time: '120'
         }
-      }
-    }
-    extensionAzureDiskEncryptionConfig: {
-      enabled: true
-      settings: {
-        EncryptionOperation: 'EnableEncryption'
-        KekVaultResourceId: '<KekVaultResourceId>'
-        KeyEncryptionAlgorithm: 'RSA-OAEP'
-        KeyEncryptionKeyURL: '<KeyEncryptionKeyURL>'
-        KeyVaultResourceId: '<KeyVaultResourceId>'
-        KeyVaultURL: '<KeyVaultURL>'
-        ResizeOSDisk: 'false'
-        VolumeType: 'All'
       }
     }
     extensionDependencyAgentConfig: {

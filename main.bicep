@@ -12,15 +12,15 @@ module coreNetwork_RegionOne 'core/network/coreNetwork.bicep' = {
   }
 }
 
-module coreNetwork_RegionTwo 'core/network/coreNetwork.bicep' = {
-  name: 'coreNetwork_RegionTwo${solutionName}'
-  params: {
-    environmentName: 'Prod'
-    identifier: 'coreNetRegionTwo'
-    coreNetworkingLocation: 'norwayeast'
-    coreAddressPrefixes: '172.16.2.0/24'
-  }
-}
+// module coreNetwork_RegionTwo 'core/network/coreNetwork.bicep' = {
+//   name: 'coreNetwork_RegionTwo${solutionName}'
+//   params: {
+//     environmentName: 'Prod'
+//     identifier: 'coreNetRegionTwo'
+//     coreNetworkingLocation: 'norwayeast'
+//     coreAddressPrefixes: '172.16.2.0/24'
+//   }
+// }
 
 module workloadRegionOne 'Workload/Workload.bicep' = {
   name: 'workloadRegionOne${solutionName}'
@@ -38,18 +38,18 @@ module workloadRegionOne 'Workload/Workload.bicep' = {
   }
 }
 
-module workloadRegionTwo 'Workload/Workload.bicep' = {
-  name: 'workloadRegionTwo${solutionName}'
-  dependsOn: [
-    coreNetwork_RegionTwo
-  ]
-  params: {
-    identifier: 'workloadRegionTwo'
-    environmentName: 'Prod'
-    WorkloadLocation: 'norwayeast'
-    oCoreNetwork: coreNetwork_RegionTwo.outputs.coreSubnet1
-    VMSSSize: 'Standard_D8as_v5'
-    VMSSLocalAdminUser: 'localadmin'
-    VMSSLocalAdminPassword: 'Password123!'
-  }
-}
+// module workloadRegionTwo 'Workload/Workload.bicep' = {
+//   name: 'workloadRegionTwo${solutionName}'
+//   dependsOn: [
+//     coreNetwork_RegionTwo
+//   ]
+//   params: {
+//     identifier: 'workloadRegionTwo'
+//     environmentName: 'Prod'
+//     WorkloadLocation: 'norwayeast'
+//     oCoreNetwork: coreNetwork_RegionTwo.outputs.coreSubnet1
+//     VMSSSize: 'Standard_D8as_v5'
+//     VMSSLocalAdminUser: 'localadmin'
+//     VMSSLocalAdminPassword: 'Password123!'
+//   }
+// }
