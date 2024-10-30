@@ -28,7 +28,8 @@ param VMSSLocalAdminUser string = 'localadmin'
 @secure()
 @description('Local Admin Password. Required for virtual machine')
 param VMSSLocalAdminPassword string
-var customDataB64 = loadFileAsBase64('./vmss/cloud-init.txt')
+//var customDataB64 = base64(loadFileAsBase64(('./vmss/cloud-init.yaml')))
+var customDataB641 = loadFileAsBase64('./vmss/cloud-init.yaml')
 
 module WorkloadResourceGroup 'br/public:avm/res/resources/resource-group:0.3.0' = {
   scope: subscription()
@@ -95,9 +96,9 @@ module VirtualMachineScaleSet 'br/public:avm/res/compute/virtual-machine-scale-s
     // Required parameters
     adminUsername: VMSSLocalAdminUser
     imageReference: {
-      offer: '0001-com-ubuntu-server-jammy'
+      offer: '0001-com-ubuntu-server-focal'
       publisher: 'Canonical'
-      sku: '22_04-lts-gen2'
+      sku: '20_04-lts'
       version: 'latest'
     }
     name: VMSSName
@@ -131,7 +132,7 @@ module VirtualMachineScaleSet 'br/public:avm/res/compute/virtual-machine-scale-s
     // Non-required parameters
     adminPassword: VMSSLocalAdminPassword
     encryptionAtHost: false
-    customData: customDataB64
+    customData: customDataB641
     extensionAntiMalwareConfig: {
       enabled: true
       settings: {

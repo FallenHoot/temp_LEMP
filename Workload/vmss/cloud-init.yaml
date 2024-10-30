@@ -1,4 +1,3 @@
-cat << EOF > cloud-init.txt
 #cloud-config
 # Install, update, and upgrade packages
 package_upgrade: true
@@ -26,6 +25,8 @@ packages:
   - php-xmlrpc
   - php-zip
   - php-fpm
+  - jq
+  - az
 write_files:
   - owner: www-data:www-data
     path: /etc/nginx/sites-available/default.conf
@@ -104,4 +105,4 @@ runcmd:
   - chmod 600 /var/www/$FQDN/wp-config.php
   - mkdir -p -m 0775 /var/www/$FQDN/wp-content/uploads
   - chgrp www-data /var/www/$FQDN/wp-content/uploads
-EOF
+  - az tag create --resource-id $(curl -H Metadata:true --noproxy "*" "http://169.254.169.254/metadata/instance?api-version=2021-02-01" | jq -r '.compute.resourceId') --tags cloud-init=true
