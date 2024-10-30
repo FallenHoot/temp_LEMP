@@ -24,6 +24,9 @@ module coreNetwork_RegionTwo 'core/network/coreNetwork.bicep' = {
 
 module workloadRegionOne 'Workload/Workload.bicep' = {
   name: 'workloadRegionOne${solutionName}'
+  dependsOn: [
+    coreNetwork_RegionOne
+  ]
   params: {
     identifier: 'workloadRegionOne'
     environmentName: 'Prod'
@@ -37,6 +40,9 @@ module workloadRegionOne 'Workload/Workload.bicep' = {
 
 module workloadRegionTwo 'Workload/Workload.bicep' = {
   name: 'workloadRegionTwo${solutionName}'
+  dependsOn: [
+    coreNetwork_RegionTwo
+  ]
   params: {
     identifier: 'workloadRegionTwo'
     environmentName: 'Prod'

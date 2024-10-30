@@ -38,12 +38,13 @@ module coreNetworkResourceGroup 'br/public:avm/res/resources/resource-group:0.3.
 
 module coreNetworkSecurityGroup 'br/public:avm/res/network/network-security-group:0.5.0' = {
   scope: resourceGroup(coreNetworkResourceGroup.name)
-  name: 'networkSecurityGroupDeployment'
+  name: 'networkSecurityGroupDeployment${solutionName}'
   params: {
     // Required parameters
     name: coreNetworkSecurityGroupName
     // Non-required parameters
     location: coreNetworkingLocation
+    
     securityRules: [
       {
         name: 'deny-hop-outbound'
@@ -72,7 +73,7 @@ module coreNetworkSecurityGroup 'br/public:avm/res/network/network-security-grou
 
 module corevNet 'br/public:avm/res/network/virtual-network:0.5.0' = {
   scope: resourceGroup(coreNetworkResourceGroup.name)
-  name: 'virtualNetworkDeployment'
+  name: 'virtualNetworkDeployment${solutionName}'
   params: {
     // Required parameters
     addressPrefixes: [
@@ -90,8 +91,6 @@ module corevNet 'br/public:avm/res/network/virtual-network:0.5.0' = {
     }
   }
 }
-
-output coreNetworkResourceGroupName string = coreNetworkResourceGroup.outputs.name
 output corevNetName string = corevNet.outputs.name
 output coreSubnet0 string = corevNet.outputs.subnetResourceIds[0]
 output coreSubnet1 string = corevNet.outputs.subnetResourceIds[1]

@@ -56,7 +56,7 @@ module PublicIpAddress 'br/public:avm/res/network/public-ip-address:0.6.0' = {
     skuTier: 'Regional'
     tags: {
       Environment: environmentName
-      'hidden-title': 'PublicIP for VMSS'
+      'hidden-title': 'Public IP for VMSS'
       Role: 'DeploymentValidation'
     }
     zones: [
@@ -94,9 +94,9 @@ module VirtualMachineScaleSet 'br/public:avm/res/compute/virtual-machine-scale-s
     // Required parameters
     adminUsername: VMSSLocalAdminUser
     imageReference: {
-      offer: 'UbuntuServer'
+      offer: '0001-com-ubuntu-server-jammy'
       publisher: 'Canonical'
-      sku: '18.04-LTS'
+      sku: '22_04-lts-gen2'
       version: 'latest'
     }
     name: VMSSName
@@ -130,15 +130,7 @@ module VirtualMachineScaleSet 'br/public:avm/res/compute/virtual-machine-scale-s
     // Non-required parameters
     adminPassword: VMSSLocalAdminPassword
     encryptionAtHost: false
-    extensionCustomScriptConfig: {
-       enabled: true
-       settings: {
-         fileUris: [
-           'https://raw.githubusercontent.com/FallenHoot/temp_LEMP/refs/heads/main/Workload/vmss/cloud-init.txt'
-         ]
-         script: 'automate_nginx.sh'
-       }
-     }
+    customData: loadTextContent('./vmss/cloud-init.txt')
     extensionAntiMalwareConfig: {
       enabled: true
       settings: {
