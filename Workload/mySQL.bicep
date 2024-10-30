@@ -5,7 +5,10 @@ param identifier string = 'lab1'
 param environmentName string = 'Prod'
 param solutionName string = '${identifier}${uniqueString(resourceGroup().id)}'
 param LockName string = 'LEMPLock'
-param WorkloadResourceGroup string = 'test'
+
+// Resource Group
+param sqlResourceGroupName string = 'rg-sql-${solutionName}'
+param SQLLocation string = 'swedencentral'
 
 // MySQL Flexible Server
 param MySQLFlexibleServerName string = 'mysql${solutionName}'
@@ -15,8 +18,17 @@ param MySQLLocalAdminUser string = 'localadmin'
 @description('Local Admin Password. Required for virtual machine')
 param MySQLLocalAdminPassword string
 
+module sqlResourceGroup 'br/public:avm/res/resources/resource-group:0.3.0' = {
+  scope: subscription()
+  name: sqlResourceGroupName
+  params: {
+    location: SQLLocation
+    name: sqlResourceGroupName
+  }
+}
+
 module MySQLFlexibleServer 'br/public:avm/res/db-for-my-sql/flexible-server:0.4.1' = {
-  scope: resourceGroup(WorkloadResourceGroup)
+  scope: resourceGroup(sqlResourceGroup.name)
   name: 'flexibleServerDeployment${solutionName}'
   params: {
     // Required parameters
@@ -30,7 +42,7 @@ module MySQLFlexibleServer 'br/public:avm/res/db-for-my-sql/flexible-server:0.4.
     geoRedundantBackup: 'Disabled'
     location: resourceGroup().location
     lock: {
-      kind: 'CanNotDelete'
+      kind: 'None'
       name: LockName
     }
     storageAutoGrow: 'Enabled'

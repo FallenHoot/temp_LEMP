@@ -62,6 +62,21 @@ module coreNetworkSecurityGroup 'br/public:avm/res/network/network-security-grou
           sourcePortRange: '*'
         }
       }
+      {
+        name: 'allow-80-Inbound'
+        properties: {
+          access: 'Allow'
+          destinationAddressPrefix: '*'
+          destinationPortRanges: [
+            '80'
+          ]
+          direction: 'Inbound'
+          priority: 200
+          protocol: 'Tcp'
+          sourceAddressPrefix: '*'
+          sourcePortRange: '*'
+        }
+      }
     ]
     tags: {
       Environment: environmentName

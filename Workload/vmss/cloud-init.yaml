@@ -35,11 +35,11 @@ write_files:
             listen 80 default_server;
             listen [::]:80 default_server;
             root /var/www/html;
-            server_name $FQDN;
+            server_name lemp.swedencentral.cloudapp.azure.com;
         }
 write_files:
   - owner: www-data:www-data
-    path: /etc/nginx/sites-available/$FQDN.conf
+    path: /etc/nginx/sites-available/lemp.swedencentral.cloudapp.azure.com.conf
     content: |
         upstream php {
             server unix:/run/php/php8.1-fpm.sock;
@@ -47,10 +47,10 @@ write_files:
         server {
             listen 443 ssl http2;
             listen [::]:443 ssl http2;
-            server_name $FQDN;
-            ssl_certificate /etc/letsencrypt/live/$FQDN/fullchain.pem;
-            ssl_certificate_key /etc/letsencrypt/live/$FQDN/privkey.pem;
-            root /var/www/$FQDN;
+            server_name lemp.swedencentral.cloudapp.azure.com;
+            ssl_certificate /etc/letsencrypt/live/lemp.swedencentral.cloudapp.azure.com/fullchain.pem;
+            ssl_certificate_key /etc/letsencrypt/live/lemp.swedencentral.cloudapp.azure.com/privkey.pem;
+            root /var/www/lemp.swedencentral.cloudapp.azure.com;
             index index.php;
             location / {
                 try_files \$uri \$uri/ /index.php?\$args;
@@ -78,8 +78,8 @@ write_files:
         server {
             listen 80;
             listen [::]:80;
-            server_name $FQDN;
-            return 301 https://$FQDN\$request_uri;
+            server_name lemp.swedencentral.cloudapp.azure.com;
+            return 301 https://lemp.swedencentral.cloudapp.azure.com\$request_uri;
         }
 runcmd:
   - sed -i 's/;cgi.fix_pathinfo.*/cgi.fix_pathinfo = 1/' /etc/php/8.1/fpm/php.ini
@@ -88,21 +88,21 @@ runcmd:
   - sed -i 's/^post_max_size \= .*/post_max_size \= 64M/g' /etc/php/8.1/fpm/php.ini
   - systemctl restart php8.1-fpm
   - systemctl restart nginx
-  - certbot --nginx certonly --non-interactive --agree-tos -d $FQDN -m dummy@dummy.com --redirect
-  - ln -s /etc/nginx/sites-available/$FQDN.conf /etc/nginx/sites-enabled/
+  - certbot --nginx certonly --non-interactive --agree-tos -d lemp.swedencentral.cloudapp.azure.com -m dummy@dummy.com --redirect
+  - ln -s /etc/nginx/sites-available/lemp.swedencentral.cloudapp.azure.com.conf /etc/nginx/sites-enabled/
   - rm /etc/nginx/sites-enabled/default
   - systemctl restart nginx
   - curl --url https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar --output /tmp/wp-cli.phar
   - mv /tmp/wp-cli.phar /usr/local/bin/wp
   - chmod +x /usr/local/bin/wp
   - wp cli update
-  - mkdir -m 0755 -p /var/www/$FQDN
-  - chown -R azureadmin:www-data /var/www/$FQDN
-  - sudo -u azureadmin -i -- wp core download --path=/var/www/$FQDN
-  - sudo -u azureadmin -i -- wp config create --dbhost=$MY_MYSQL_DB_NAME.mysql.database.azure.com --dbname=wp001 --dbuser=$MY_MYSQL_ADMIN_USERNAME --dbpass="$MY_MYSQL_ADMIN_PW" --path=/var/www/$FQDN
-  - sudo -u azureadmin -i -- wp core install --url=$FQDN --title="Azure hosted blog" --admin_user=$MY_WP_ADMIN_USER --admin_password="$MY_WP_ADMIN_PW" --admin_email=$MY_AZURE_USER --path=/var/www/$FQDN
-  - sudo -u azureadmin -i -- wp plugin update --all --path=/var/www/$FQDN
-  - chmod 600 /var/www/$FQDN/wp-config.php
-  - mkdir -p -m 0775 /var/www/$FQDN/wp-content/uploads
-  - chgrp www-data /var/www/$FQDN/wp-content/uploads
+  - mkdir -m 0755 -p /var/www/lemp.swedencentral.cloudapp.azure.com
+  - chown -R azureadmin:www-data /var/www/lemp.swedencentral.cloudapp.azure.com
+  - sudo -u azureadmin -i -- wp core download --path=/var/www/lemp.swedencentral.cloudapp.azure.com
+  - sudo -u azureadmin -i -- wp config create --dbhost=$MY_MYSQL_DB_NAME.mysql.database.azure.com --dbname=wp001 --dbuser=localadmin --dbpass="Password123!" --path=/var/www/lemp.swedencentral.cloudapp.azure.com
+  - sudo -u azureadmin -i -- wp core install --url=lemp.swedencentral.cloudapp.azure.com --title="Azure hosted blog" --admin_user=$MY_WP_ADMIN_USER --admin_password="$MY_WP_ADMIN_PW" --admin_email=$MY_AZURE_USER --path=/var/www/lemp.swedencentral.cloudapp.azure.com
+  - sudo -u azureadmin -i -- wp plugin update --all --path=/var/www/lemp.swedencentral.cloudapp.azure.com
+  - chmod 600 /var/www/lemp.swedencentral.cloudapp.azure.com/wp-config.php
+  - mkdir -p -m 0775 /var/www/lemp.swedencentral.cloudapp.azure.com/wp-content/uploads
+  - chgrp www-data /var/www/lemp.swedencentral.cloudapp.azure.com/wp-content/uploads
   - az tag create --resource-id $(curl -H Metadata:true --noproxy "*" "http://169.254.169.254/metadata/instance?api-version=2021-02-01" | jq -r '.compute.resourceId') --tags cloud-init=true
